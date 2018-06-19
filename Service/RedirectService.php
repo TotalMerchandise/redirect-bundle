@@ -32,11 +32,10 @@ class RedirectService
      */
     public function redirect(Request $request)
     {
-        $url = $request->getUri();
+        $url = $request->getRequestUri();
         foreach ($this->rules as $redirect) {
             $redirect = (new Redirect())->fromConfigRule($redirect)->withRequest($request);
-            preg_match($redirect->getPattern(), $url, $matches);
-            if (!empty($matches)) {
+            if (trim($url, '/') === trim($redirect->getPattern(), '/')) {
                 return new RedirectResponse(
                     $redirect->getProtocol().$redirect->getRedirectURI().$redirect->getPath(),
                     $redirect->getStatusCode()
